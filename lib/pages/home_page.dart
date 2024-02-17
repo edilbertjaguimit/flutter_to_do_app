@@ -42,6 +42,7 @@ class _HomePageState extends State<HomePage> {
                     hintText: index != null
                         ? 'Edit your task...'
                         : 'Type your new task...',
+
                     // errorText: _isEmpty ? "Value Can't Be Empty" : null,
                     hintStyle: const TextStyle(color: Colors.white),
                     enabledBorder: const UnderlineInputBorder(
@@ -56,29 +57,19 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           actions: <Widget>[
-            index == null
-                ? TextButton(
-                    child: const Text(
-                      'Add',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onPressed: () {
-                      setState(() {
+            TextButton(
+              child: Text(
+                index == null ? 'Add' : 'Edit',
+                style: const TextStyle(color: Colors.white),
+              ),
+              onPressed: () {
+                index == null
+                    ? setState(() {
                         if (txtAddTaskName.text.isNotEmpty) {
                           todos.add(ToDo(taskName: txtAddTaskName.text));
-                          Navigator.of(context).pop();
-                          txtAddTaskName.text = '';
                         }
-                      });
-                    },
-                  )
-                : TextButton(
-                    child: const Text(
-                      'Edit',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onPressed: () {
-                      setState(() {
+                      })
+                    : setState(() {
                         if (index != null) {
                           setState(() {
                             if (txtAddTaskName.text.isNotEmpty) {
@@ -87,12 +78,12 @@ class _HomePageState extends State<HomePage> {
                             }
                           });
                         }
-                        Navigator.of(context).pop();
-                        txtAddTaskName.text = '';
                         index = null;
                       });
-                    },
-                  ),
+                Navigator.of(context).pop();
+                txtAddTaskName.text = '';
+              },
+            ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
