@@ -15,7 +15,7 @@ class _HomePageState extends State<HomePage> {
   List<ToDo> todos = [];
   TextEditingController txtAddTaskName = TextEditingController();
   // bool _isEmpty = false;
-  Future<void> _showMyDialog() async {
+  Future<void> _showMyDialog({int? index}) async {
     return showDialog<void>(
       context: context,
       barrierColor: Colors.transparent,
@@ -24,9 +24,9 @@ class _HomePageState extends State<HomePage> {
         return AlertDialog(
           elevation: 1,
           backgroundColor: Colors.purple[800],
-          title: const Text(
-            'Add Task',
-            style: TextStyle(color: Colors.white),
+          title: Text(
+            index != null ? 'Edit Task' : 'Add Task',
+            style: const TextStyle(color: Colors.white),
           ),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -38,14 +38,16 @@ class _HomePageState extends State<HomePage> {
                 TextField(
                   controller: txtAddTaskName,
                   style: const TextStyle(color: Colors.white),
-                  decoration: const InputDecoration(
-                    hintText: 'Type your new task...',
+                  decoration: InputDecoration(
+                    hintText: index != null
+                        ? 'Edit your task...'
+                        : 'Type your new task...',
                     // errorText: _isEmpty ? "Value Can't Be Empty" : null,
-                    hintStyle: TextStyle(color: Colors.white),
-                    enabledBorder: UnderlineInputBorder(
+                    hintStyle: const TextStyle(color: Colors.white),
+                    enabledBorder: const UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                     ),
-                    focusedBorder: UnderlineInputBorder(
+                    focusedBorder: const UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                     ),
                   ),
@@ -54,23 +56,43 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           actions: <Widget>[
-            TextButton(
-              child: const Text(
-                'Add',
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: () {
-                setState(() {
-                  if (txtAddTaskName.text.isNotEmpty) {
-                    todos.add(ToDo(taskName: txtAddTaskName.text));
-                    Navigator.of(context).pop();
-                    txtAddTaskName.text = '';
-                  } else {
-                    // _isEmpty = true;
-                  }
-                });
-              },
-            ),
+            index == null
+                ? TextButton(
+                    child: const Text(
+                      'Add',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        if (txtAddTaskName.text.isNotEmpty) {
+                          todos.add(ToDo(taskName: txtAddTaskName.text));
+                          Navigator.of(context).pop();
+                          txtAddTaskName.text = '';
+                        }
+                      });
+                    },
+                  )
+                : TextButton(
+                    child: const Text(
+                      'Edit',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        if (index != null) {
+                          setState(() {
+                            if (txtAddTaskName.text.isNotEmpty) {
+                              todos[index!] =
+                                  ToDo(taskName: txtAddTaskName.text);
+                            }
+                          });
+                        }
+                        Navigator.of(context).pop();
+                        txtAddTaskName.text = '';
+                        index = null;
+                      });
+                    },
+                  ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
@@ -105,6 +127,7 @@ class _HomePageState extends State<HomePage> {
                 itemCount: todos.length,
                 itemBuilder: (context, index) {
                   return ToDoList(
+                    index: index,
                     todo: todos[index],
                     onChange: (value) {
                       setState(() {
@@ -115,6 +138,11 @@ class _HomePageState extends State<HomePage> {
                       setState(() {
                         todos.remove(todos[index]);
                       });
+                    },
+                    onEdit: () {
+                      _showMyDialog(index: index);
+                      txtAddTaskName.text = todos[index].taskName;
+                      // editTask(index: index);
                     },
                   );
                 },

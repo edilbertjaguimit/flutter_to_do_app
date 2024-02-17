@@ -5,10 +5,14 @@ class ToDoList extends StatelessWidget {
   final ToDo todo;
   final Function(bool?)? onChange;
   final Function() onDelete;
+  final Function() onEdit;
+  final int index;
   const ToDoList({
+    required this.index,
     required this.todo,
     required this.onChange,
     required this.onDelete,
+    required this.onEdit,
     super.key,
   });
 
@@ -42,22 +46,29 @@ class ToDoList extends StatelessWidget {
             (states) => const BorderSide(width: 2, color: Colors.white),
           ),
         ),
-        trailing: todo.taskComplete!
-            ? Wrap(
-                // spacing: 12, // space between two icons
-                children: <Widget>[
-                  // Icon(Icons.call), // icon-1
-                  // Icon(Icons.message), // icon-2
-                  TextButton(
+        trailing: Wrap(
+          // spacing: 12, // space between two icons
+          children: <Widget>[
+            // Icon(Icons.call), // icon-1
+            // Icon(Icons.message), // icon-2
+            // icon-3
+            todo.taskComplete!
+                ? TextButton(
                     onPressed: onDelete,
                     child: const Icon(
                       Icons.delete,
                       color: Colors.white,
                     ),
-                  ) // icon-3
-                ],
-              )
-            : null,
+                  )
+                : TextButton(
+                    onPressed: onEdit,
+                    child: const Icon(
+                      Icons.edit,
+                      color: Colors.white,
+                    ),
+                  )
+          ],
+        ),
       ),
     );
   }
